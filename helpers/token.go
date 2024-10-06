@@ -3,10 +3,11 @@ package helpers
 import (
 	"context"
 	"fmt"
-	"jwt-token-auth/database"
 	"log"
 	"os"
 	"time"
+
+	database "github.com/RAVAN0407/jwt-token-auth/database"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"

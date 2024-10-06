@@ -1,7 +1,7 @@
 package routes
 
 import (
-	controller "jwt-token-auth/controllers"
+	controller "github.com/RAVAN0407/jwt-token-auth/controllers"
 
 	"github.com/gin-gonic/gin"
 )

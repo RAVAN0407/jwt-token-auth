@@ -1,8 +1,8 @@
 package routes
 
 import (
-	controller "jwt-token-auth/controllers"
-	"jwt-token-auth/middleware"
+	controller "github.com/RAVAN0407/jwt-token-auth/controllers"
+	middleware "github.com/RAVAN0407/jwt-token-auth/middleware"
 
 	"github.com/gin-gonic/gin"
 )

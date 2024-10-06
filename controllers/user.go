@@ -3,9 +3,9 @@ package controller
 import (
 	"context"
 	"fmt"
-	"jwt-token-auth/database"
-	"jwt-token-auth/helpers"
-	"jwt-token-auth/models"
+	databse "github.com/RAVAN0407/jwt-token-auth/database"
+	helpers "github.com/RAVAN0407/jwt-token-auth/helpers"
+	models "github.com/RAVAN0407/jwt-token-auth/models"
 	"log"
 	"net/http"
 	"time"
