@@ -11,38 +11,36 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type SignedDetails struct {
-	firstName string
-	lastName  string
-	email     string
-	userType  string
-	uid       string
+	FirstName string
+	LastName  string
+	Email     string
+	UserType  string
+	UserID    string
 	jwt.StandardClaims
 }
 
 var SECRET_KEY string = os.Getenv("SECRET_KEY")
 
-var userCollection *mongo.Collection = database.Client.OpenConnection("user")
+var userCollection *mongo.Collection = database.OpenConnection(database.Client, "user")
 
 func GenerateAllToken(email string, firstName string, lastName string, userType string, uid string) (string, string, error) {
 	claims := &SignedDetails{
-		firstName: firstName,
-		lastName:  lastName,
-		email:     email,
-		userType:  userType,
-		uid:       uid,
-		StandardClaims: &jwt.StandardClaims{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		UserType:  userType,
+		UserID:    uid,
+		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},
 	}
 
 	refreshClaims := &SignedDetails{
-		StandardClaims: &jwt.StandardClaims{
+		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(168)).Unix(),
 		},
 	}
@@ -63,27 +61,20 @@ func UpdateAllTokens(signedTkn, signedRefreshTkn string, userId string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 
-	var updateObj primitive.D
+	updateObj := bson.D{
+		{"token", signedTkn},
+		{"refreshToken", signedRefreshTkn},
+		{"updatedAt", time.Now()},
+	}
 
-	updateObj = append(updateObj, bson.E{"token", signedTkn})
-	updateObj = append(updateObj, bson.E{"refreshToken", signedRefreshTkn})
-	updateObj = append(updateObj, bson.E{"updatedAt", time.Now()})
-
-	upsert := true
 	filter := bson.M{"userID": userId}
-	opt := options.UpdateOptions{
-		Upsert: &upsert,
-	}
+	update := bson.M{"$set": updateObj}
 
-	err := userCollection.UpdateOne{
-		ctx,
-		filter,
-		bson.D{{"$set", updateObj}},
-		&opt,
-	}
+	_, err := userCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 

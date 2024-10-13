@@ -11,8 +11,8 @@ import (
 func main() {
 
 	router := gin.New()
-	router.Use(gin.Logger)
-	router.Use(gin.Recovery)
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
 	routes.Auth(router)
 	routes.User(router)
 

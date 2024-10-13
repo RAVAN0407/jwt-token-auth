@@ -30,9 +30,9 @@ func DBInstance() *mongo.Client {
 	return client
 }
 
-var Client *mongo.client = DBInstance()
+var Client *mongo.Client = DBInstance()
 
-func (client *mongo.client) OpenConnection(collection string) *mongo.Collection {
+func OpenConnection(c *mongo.Client, collection string) *mongo.Collection {
 	// TODO Database value
-	return client.Database("Cluster0").Collection(collection)
+	return c.Database("Cluster0").Collection(collection)
 }
